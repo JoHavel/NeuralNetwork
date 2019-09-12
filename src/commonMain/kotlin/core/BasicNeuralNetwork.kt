@@ -4,6 +4,7 @@ import koma.extensions.map
 import koma.matrix.Matrix
 import koma.rand
 import koma.zeros
+import kotlin.math.sqrt
 
 class BasicNeuralNetwork(
         private val numberOfHiddenLayers: Int,
@@ -14,9 +15,12 @@ class BasicNeuralNetwork(
 
     private val weights = MutableList(numberOfHiddenLayers + 1) {
         when (it) {
-            0 ->                        rand(sizes(it), inputLayerSize)
-            numberOfHiddenLayers ->     rand(outputLayerSize, sizes(it - 1))
-            else ->                     rand(sizes(it), sizes(it - 1))
+            0 ->                        rand(sizes(it), inputLayerSize) * (sqrt(2.0 / (sizes(it) + inputLayerSize)))
+            numberOfHiddenLayers ->     rand(outputLayerSize, sizes(it - 1)) * (sqrt(2.0 / (outputLayerSize + sizes(it - 1))))
+            else ->                     rand(sizes(it), sizes(it - 1)) * (sqrt(2.0 / (sizes(it) + sizes(it - 1))))
+//            0 ->                        zeros(sizes(it), inputLayerSize)
+//            numberOfHiddenLayers ->     zeros(outputLayerSize, sizes(it - 1))
+//            else ->                     zeros(sizes(it), sizes(it - 1))
         }
     }
 
@@ -29,7 +33,8 @@ class BasicNeuralNetwork(
     }
 
     private val biases = MutableList(numberOfHiddenLayers + 1) {
-        rand(if (it == numberOfHiddenLayers) { outputLayerSize } else { sizes(it) }, 1)
+        //rand(if (it == numberOfHiddenLayers) { outputLayerSize } else { sizes(it) }, 1)
+        zeros(if (it == numberOfHiddenLayers) { outputLayerSize } else { sizes(it) }, 1)
     }
 
     var learningRate = 0.1

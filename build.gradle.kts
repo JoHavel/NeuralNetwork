@@ -1,6 +1,8 @@
 version = "1.0-SNAPSHOT"
+val serializationVersion = "0.13.0"
 plugins {
     kotlin("multiplatform") version "1.3.50"
+    id("org.jetbrains.kotlin.plugin.serialization") version "1.3.50"
     `maven-publish`
     id("org.jetbrains.dokka") version "0.9.18"
 }
@@ -36,6 +38,7 @@ kotlin {
             dependencies {
                 kotlin("stdlib-common")
                 implementation("com.kyonifer:koma-core-api-common:0.12")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-common:$serializationVersion")
             }
         }
         val commonTest by getting {
@@ -50,6 +53,7 @@ kotlin {
                 //implementation("com.kyonifer:koma-core-jblas:0.12")
                 //implementation("com.kyonifer:koma-core-mtj:0.12")
                 implementation("com.kyonifer:koma-core-ejml:0.12")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime:$serializationVersion")
             }
         }
         val jvmTest by getting {
@@ -62,6 +66,7 @@ kotlin {
             dependencies {
                 implementation(kotlin("stdlib-js"))
                 implementation("com.kyonifer:koma-core-js:0.12")
+                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-js:$serializationVersion")
             }
         }
         val jsTest by getting {
@@ -73,6 +78,7 @@ kotlin {
 //            dependencies {
 //                //implementation("com.kyonifer:koma-core-api-common:0.12")
 //                implementation("com.kyonifer:koma-core-cblas:0.12")
+//                implementation("org.jetbrains.kotlinx:kotlinx-serialization-runtime-native:$serialization_version")
 //            }
 //        }
 //        val mingwTest by getting {

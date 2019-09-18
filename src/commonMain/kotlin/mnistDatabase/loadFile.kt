@@ -3,6 +3,8 @@ package mnistDatabase
 import core.INeuralNetwork
 
 expect fun loadFile(file: String): ByteArray
+expect fun loadFileString(file: String): String
+expect fun saveFile(file: String, text: String)
 
 private fun Byte.toUInt() = (this.toInt() + 256) % 256
 private fun Byte.toUNDouble() = ((this.toDouble() + 256.0) % 256.0) / 256
@@ -22,7 +24,7 @@ private fun List<Byte>.toIntArray(): IntArray {
     return result
 }
 
-class TrainingData(imageFile: String, numberFile: String): Sequence<Pair<DoubleArray, DoubleArray>> {
+class TrainingData(imageFile: String, numberFile: String, val inverse: Boolean): Sequence<Pair<DoubleArray, DoubleArray>> {
 
     private val imageBytes = loadFile(imageFile.removeSuffix(".idx3-ubyte") + ".idx3-ubyte")
     private val imageFirstInts = imageBytes.slice(4 until 16).toIntArray()
@@ -40,14 +42,25 @@ class TrainingData(imageFile: String, numberFile: String): Sequence<Pair<DoubleA
     override fun iterator(): Iterator<Pair<DoubleArray, DoubleArray>> {
         return object: Iterator<Pair<DoubleArray, DoubleArray>> {
             val data = this@TrainingData
+            val indexes = (0 until numberOfImages).shuffled()
             var index = 0
             override fun hasNext() = index < numberOfImages
 
             override fun next(): Pair<DoubleArray, DoubleArray> {
 
-                val image = data.imageBytes.slice(16 + index * sizeOfImage until 16 + (index + 1) * sizeOfImage).map { byte -> byte.toUNDouble() }.toDoubleArray()
+                var image = data.imageBytes.slice(16 + indexes[index] * sizeOfImage until 16 + (indexes[index] + 1) * sizeOfImage).map { byte -> byte.toUNDouble() }.toDoubleArray()
 
-                val position = numberBytes[8 + index].toUInt()
+                if (inverse) {
+                    val newimage = DoubleArray(sizeOfImage)
+                    for (i in 0 until numberOfRows) {
+                        for (j in 0 until numberOfColumns) {
+                            newimage[i*28 + j] = image[j*28 + i]
+                        }
+                    }
+                    image = newimage
+                }
+
+                val position = numberBytes[8 + indexes[index]].toUInt()
                 val number = DoubleArray(10) { if (it == position) {1.0} else {0.0} }
 
                 index++

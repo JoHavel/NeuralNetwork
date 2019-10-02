@@ -81,20 +81,19 @@ kotlin {
 }
 
 tasks {
+
+    // Thanks to https://discuss.kotlinlang.org/t/how-to-configure-dokka-for-kotlin-multiplatform/9834 for setting dokka
     dokka {
         moduleName = "neuralnetwork"
         outputFormat = "html"
         outputDirectory = "$buildDir/dokka"
-        impliedPlatforms = mutableListOf("Common", "JS") // This will force platform tags for all non-common sources e.g. "JVM"
+        impliedPlatforms = mutableListOf("Common", "JS")
         kotlinTasks {
-            // dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
-            // use sourceRoot instead (see below)
             listOf()
         }
         val pathsCommon = kotlin.sourceSets["commonMain"].kotlin.asPath.split(";")
         pathsCommon.forEach {
             sourceRoot {
-                // assuming there is only a single source dir...
                 path = it
                 platforms = mutableListOf("Common")
             }
@@ -102,7 +101,6 @@ tasks {
         val pathsJS = kotlin.sourceSets["jsMain"].kotlin.asPath.split(";")
         pathsJS.forEach {
             sourceRoot {
-                // assuming there is only a single source dir...
                 path = it
                 platforms = mutableListOf("JS")
             }
@@ -110,7 +108,6 @@ tasks {
         val pathsJVM = kotlin.sourceSets["jvmMain"].kotlin.asPath.split(";")
         pathsJS.forEach {
             sourceRoot {
-                // assuming there is only a single source dir...
                 path = it
                 platforms = mutableListOf("JVM")
             }

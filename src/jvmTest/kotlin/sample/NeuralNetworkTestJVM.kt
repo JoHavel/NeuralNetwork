@@ -20,7 +20,11 @@ class NeuralNetworkTestJVM {
 
     //@Test
     fun mnist() {
-        val nn = BasicNeuralNetwork(numberOfHiddenLayers, inputLayerSize = imageWidth * imageHeight, outputLayerSize = numberOfDigits, sizes = { 100 })
+        val nn = BasicNeuralNetwork(
+            numberOfHiddenLayers,
+            inputLayerSize = imageWidth * imageHeight,
+            outputLayerSize = numberOfDigits,
+            sizes = { 100 })
         repeat(10) {
             nn.train(mnistDigitTrainingDataset)
             nn.train(emnistDigitTrainingDataset)
@@ -46,12 +50,19 @@ class NeuralNetworkTestJVM {
         fun Pair<DoubleArray, DoubleArray>.print() {
             for (i in 0 until imageHeight) {
                 for (j in 0 until imageWidth) {
-                    print(if(first[j+i* imageWidth] < blackFrom) {"."} else {"#"})
+                    print(
+                        if (first[j + i * imageWidth] < blackFrom) {
+                            "."
+                        } else {
+                            "#"
+                        }
+                    )
                 }
                 println()
             }
             println(second.indexOf(1.0))
         }
+
         val data = mnistDigitTrainingDataset.iterator().next()
         data.print()
     }

@@ -13,7 +13,7 @@ private fun List<Byte>.toIntArray(): IntArray {
     require(size % 4 == 0)
     val result = IntArray(size / 4)
     for (i in indices) {
-        result[i / 4] += (this[i].toUInt() shl 8 * (when(i % 4) {
+        result[i / 4] += (this[i].toUInt() shl 8 * (when (i % 4) {
             0 -> 3
             1 -> 2
             2 -> 1
@@ -24,7 +24,8 @@ private fun List<Byte>.toIntArray(): IntArray {
     return result
 }
 
-class TrainingData(imageFile: String, numberFile: String, val inverse: Boolean): Sequence<Pair<DoubleArray, DoubleArray>> {
+class TrainingData(imageFile: String, numberFile: String, val inverse: Boolean) :
+    Sequence<Pair<DoubleArray, DoubleArray>> {
 
     private val imageBytes = loadFile(imageFile.removeSuffix(".idx3-ubyte") + ".idx3-ubyte")
     private val imageFirstInts = imageBytes.slice(4 until 16).toIntArray()
@@ -40,7 +41,7 @@ class TrainingData(imageFile: String, numberFile: String, val inverse: Boolean):
     }
 
     override fun iterator(): Iterator<Pair<DoubleArray, DoubleArray>> {
-        return object: Iterator<Pair<DoubleArray, DoubleArray>> {
+        return object : Iterator<Pair<DoubleArray, DoubleArray>> {
             val data = this@TrainingData
             val indexes = (0 until numberOfImages).shuffled()
             var index = 0
@@ -48,20 +49,28 @@ class TrainingData(imageFile: String, numberFile: String, val inverse: Boolean):
 
             override fun next(): Pair<DoubleArray, DoubleArray> {
 
-                var image = data.imageBytes.slice(16 + indexes[index] * sizeOfImage until 16 + (indexes[index] + 1) * sizeOfImage).map { byte -> byte.toUNDouble() }.toDoubleArray()
+                var image =
+                    data.imageBytes.slice(16 + indexes[index] * sizeOfImage until 16 + (indexes[index] + 1) * sizeOfImage)
+                        .map { byte -> byte.toUNDouble() }.toDoubleArray()
 
                 if (inverse) {
                     val newimage = DoubleArray(sizeOfImage)
                     for (i in 0 until numberOfRows) {
                         for (j in 0 until numberOfColumns) {
-                            newimage[i*28 + j] = image[j*28 + i]
+                            newimage[i * 28 + j] = image[j * 28 + i]
                         }
                     }
                     image = newimage
                 }
 
                 val position = numberBytes[8 + indexes[index]].toUInt()
-                val number = DoubleArray(10) { if (it == position) {1.0} else {0.0} }
+                val number = DoubleArray(10) {
+                    if (it == position) {
+                        1.0
+                    } else {
+                        0.0
+                    }
+                }
 
                 index++
                 return image to number
@@ -71,7 +80,7 @@ class TrainingData(imageFile: String, numberFile: String, val inverse: Boolean):
 }
 
 fun INeuralNetwork.train(data: TrainingData) {
-    for((input, output) in data) {
+    for ((input, output) in data) {
         train(input, output)
     }
 }

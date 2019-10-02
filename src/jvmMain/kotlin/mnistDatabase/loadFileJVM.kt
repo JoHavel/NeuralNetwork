@@ -11,4 +11,4 @@ actual fun saveFile(file: String, text: String) {
     bw.close()
 }
 
-actual fun loadFileString(file: String) = BufferedReader(FileReader(File(file))).readLine()
+actual fun loadFileString(file: String): String = BufferedReader(FileReader(File(file))).readLine()

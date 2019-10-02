@@ -3,7 +3,6 @@ package sample
 import core.BasicNeuralNetwork
 import koma.create
 import koma.matrix.Matrix
-import mnistDatabase.*
 import kotlin.test.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
@@ -42,12 +41,16 @@ class NeuralNetworkTest {
     //@Test
     fun xor() {
         val dataset = setOf(
-                DoubleArray(2) { listOf(0.0, 0.0)[it] } to DoubleArray(1) { 0.0 },
-                DoubleArray(2) { listOf(1.0, 0.0)[it] } to DoubleArray(1) { 1.0 },
-                DoubleArray(2) { listOf(0.0, 1.0)[it] } to DoubleArray(1) { 1.0 },
-                DoubleArray(2) { listOf(1.0, 1.0)[it] } to DoubleArray(1) { 0.0 }
+            DoubleArray(2) { listOf(0.0, 0.0)[it] } to DoubleArray(1) { 0.0 },
+            DoubleArray(2) { listOf(1.0, 0.0)[it] } to DoubleArray(1) { 1.0 },
+            DoubleArray(2) { listOf(0.0, 1.0)[it] } to DoubleArray(1) { 1.0 },
+            DoubleArray(2) { listOf(1.0, 1.0)[it] } to DoubleArray(1) { 0.0 }
         )
-        val nn = BasicNeuralNetwork(numberOfHiddenLayers, inputLayerSize = dataset.random().first.size, outputLayerSize = dataset.random().second.size, sizes = {2})
+        val nn = BasicNeuralNetwork(
+            numberOfHiddenLayers,
+            inputLayerSize = dataset.random().first.size,
+            outputLayerSize = dataset.random().second.size,
+            sizes = { 2 })
         repeat(50000) {
             val (input, output) = dataset.random()
             nn.train(input, output)

@@ -2,8 +2,18 @@ version = "1.0-SNAPSHOT"
 plugins {
     kotlin("multiplatform") version "1.3.50"
     `maven-publish`
+    id("org.jetbrains.dokka") version "0.9.18"
 }
+
+buildscript {
+    val dokkaVersion = "0.9.18"
+    dependencies {
+        classpath("org.jetbrains.dokka:dokka-android-gradle-plugin:$dokkaVersion")
+    }
+}
+
 repositories {
+    jcenter()
     mavenCentral()
     maven("https://dl.bintray.com/kyonifer/maven")
 }
@@ -67,5 +77,43 @@ kotlin {
 //        }
 //        val mingwTest by getting {
 //        }
+    }
+}
+
+tasks {
+    dokka {
+        moduleName = "neuralnetwork"
+        outputFormat = "html"
+        outputDirectory = "$buildDir/dokka"
+        impliedPlatforms = mutableListOf("Common", "JS") // This will force platform tags for all non-common sources e.g. "JVM"
+        kotlinTasks {
+            // dokka fails to retrieve sources from MPP-tasks so they must be set empty to avoid exception
+            // use sourceRoot instead (see below)
+            listOf()
+        }
+        val pathsCommon = kotlin.sourceSets["commonMain"].kotlin.asPath.split(";")
+        pathsCommon.forEach {
+            sourceRoot {
+                // assuming there is only a single source dir...
+                path = it
+                platforms = mutableListOf("Common")
+            }
+        }
+        val pathsJS = kotlin.sourceSets["jsMain"].kotlin.asPath.split(";")
+        pathsJS.forEach {
+            sourceRoot {
+                // assuming there is only a single source dir...
+                path = it
+                platforms = mutableListOf("JS")
+            }
+        }
+        val pathsJVM = kotlin.sourceSets["jvmMain"].kotlin.asPath.split(";")
+        pathsJS.forEach {
+            sourceRoot {
+                // assuming there is only a single source dir...
+                path = it
+                platforms = mutableListOf("JVM")
+            }
+        }
     }
 }

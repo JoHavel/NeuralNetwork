@@ -1,8 +1,11 @@
+import org.jetbrains.dokka.gradle.DokkaTask
+import java.net.URL
+
 version = "1.0-SNAPSHOT"
 plugins {
     kotlin("multiplatform") version "1.3.50"
     `maven-publish`
-    id("org.jetbrains.dokka") version "0.9.18"
+    id("org.jetbrains.dokka") version "0.10.0"
 }
 
 buildscript {
@@ -20,7 +23,7 @@ repositories {
 
 kotlin {
     jvm()
-    js {
+    js("js") {
         browser {
         }
         nodejs {
@@ -81,35 +84,22 @@ kotlin {
 }
 
 tasks {
-
-    // Thanks to https://discuss.kotlinlang.org/t/how-to-configure-dokka-for-kotlin-multiplatform/9834 for setting dokka
-    dokka {
-        moduleName = "neuralnetwork"
+    val dokka by getting(DokkaTask::class) {
         outputFormat = "html"
         outputDirectory = "$buildDir/dokka"
-        impliedPlatforms = mutableListOf("Common", "JS")
-        kotlinTasks {
-            listOf()
-        }
-        val pathsCommon = kotlin.sourceSets["commonMain"].kotlin.asPath.split(";")
-        pathsCommon.forEach {
-            sourceRoot {
-                path = it
-                platforms = mutableListOf("Common")
+        configuration {
+            externalDocumentationLink {
+                url = URL("https://example.com/docs/")
             }
         }
-        val pathsJS = kotlin.sourceSets["jsMain"].kotlin.asPath.split(";")
-        pathsJS.forEach {
-            sourceRoot {
-                path = it
-                platforms = mutableListOf("JS")
+        multiplatform {
+            val js by creating { // The same name as in Kotlin Multiplatform plugin, so the sources are fetched automatically
+                includes = listOf("packages.md")
             }
-        }
-        val pathsJVM = kotlin.sourceSets["jvmMain"].kotlin.asPath.split(";")
-        pathsJS.forEach {
-            sourceRoot {
-                path = it
-                platforms = mutableListOf("JVM")
+
+            register("jvm") { // Different name, so source roots must be passed explicitly
+                targets = listOf("JVM")
+                platform = "jvm"
             }
         }
     }

@@ -6,11 +6,25 @@ package core
 import koma.create
 import koma.matrix.Matrix
 
+/**
+ * Neural Network Interface
+ *
+ * Basic usage is train it by [train] and then use it by [run]
+ */
 interface INeuralNetwork {
+
+    /**
+     * Takes input, process it throw neural network and returns Matrix vector of [Double] outputs
+     */
     fun run(input: Matrix<Double>): Matrix<Double>
+
     fun run(input: DoubleArray) = run(create(input, input.size, 1))
 
+    /**
+     * Takes input and desired output, compute estimated output and apply backpropagation
+     */
     fun train(input: Matrix<Double>, output: Matrix<Double>)
+
     fun train(input: DoubleArray, output: DoubleArray) =
         train(create(input, input.size, 1), create(output, output.size, 1))
 

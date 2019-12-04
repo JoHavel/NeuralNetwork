@@ -42,26 +42,11 @@ class BasicNeuralNetwork(
             ) * (sqrt(2.0 / (outputLayerSize + sizes(it - 1))))
             else -> rand(sizes(it), sizes(it - 1)) * (sqrt(2.0 / (sizes(it) + sizes(it - 1))))
         }
-    }
-
-    /**
-     * List of matrices, which state neuron activated values in processed layers
-     */
-    private val values = MutableList(numberOfHiddenLayers + 2) {
-        zeros(
-            when (it) {
-                0 -> inputLayerSize
-                numberOfHiddenLayers + 1 -> outputLayerSize
-                else -> sizes(it)
-            }, 1
-        )
-    }
+    },
 
     /**
      * List of vectors, which add to neuron input
      */
-    private val biases = MutableList(numberOfHiddenLayers + 1) {
-    },
     private val biases: MutableList<Matrix<Double>> = MutableList(numberOfHiddenLayers + 1) {
         //rand(if (it == numberOfHiddenLayers) { outputLayerSize } else { sizes(it) }, 1)
         zeros(
@@ -69,6 +54,19 @@ class BasicNeuralNetwork(
                 outputLayerSize
             } else {
                 sizes(it)
+            }, 1
+        )
+    },
+
+    /**
+     * List of matrices, which state neuron activated values in processed layers
+     */
+    private val values: MutableList<Matrix<Double>> = MutableList(numberOfHiddenLayers + 2) {
+        zeros(
+            when (it) {
+                0 -> inputLayerSize
+                numberOfHiddenLayers + 1 -> outputLayerSize
+                else -> sizes(it)
             }, 1
         )
     }
@@ -108,7 +106,8 @@ class BasicNeuralNetwork(
 
             val dataList = data.split(";")
             val numberOfHiddenLayers = dataList[0].toInt()
-            val sizes: (Int) -> Int = { dataList[2].removePrefix("[").removeSuffix("]").split(", ")[it].toInt() }
+            val sizeList = dataList[2].removePrefix("[").removeSuffix("]").split(", ").map { it.toInt() }
+            val sizes: (Int) -> Int = { sizeList[it] }
             val inputLayerSize = dataList[3].toInt()
             val outputLayerSize = dataList[4].toInt()
             return BasicNeuralNetwork(

@@ -4,6 +4,7 @@
 package core
 
 import koma.create
+import koma.extensions.toDoubleArray
 import koma.matrix.Matrix
 
 /**
@@ -23,10 +24,10 @@ interface INeuralNetwork {
     /**
      * Takes input and desired output, compute estimated output and apply backpropagation
      */
-    fun train(input: Matrix<Double>, output: Matrix<Double>)
+    fun train(input: Matrix<Double>, output: Matrix<Double>): Matrix<Double>
 
     fun train(input: DoubleArray, output: DoubleArray) =
-        train(create(input, input.size, 1), create(output, output.size, 1))
+        train(create(input, input.size, 1), create(output, output.size, 1)).toDoubleArray()
 
     fun train(input: Array<DoubleArray>, output: Array<DoubleArray>) {
         require(input.size == output.size) { "Wrong training sets! Size of input is ${input.size}, size of output is ${output.size}." }

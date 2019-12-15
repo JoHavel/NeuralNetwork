@@ -37,7 +37,7 @@ class NeuralNetworkTestJVM {
         }
     }
 
-    @Test
+    //@Test
     fun savedNN() {
         val data = mnistDigitTrainingDataset.iterator().next()
         println(BasicNeuralNetwork.load(loadFileString("output.txt")).run(data.first).toList())

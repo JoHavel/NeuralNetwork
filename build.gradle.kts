@@ -1,7 +1,8 @@
 import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.URL
 
-version = "1.0-SNAPSHOT"
+group = "cz.moznabude"
+version = "0.0"
 val serializationVersion = "0.13.0"
 plugins {
     kotlin("multiplatform") version "1.3.50"
@@ -21,6 +22,24 @@ repositories {
     jcenter()
     mavenCentral()
     maven("https://dl.bintray.com/kyonifer/maven")
+}
+
+publishing {
+    repositories {
+        maven {
+            name = "GitHubPackages"
+            url = uri("https://maven.pkg.github.com/JoHavel/NeuralNetwork")
+            credentials {
+                username = project.findProperty("gpr.user") as String? ?: System.getenv("USERNAME")
+                password = project.findProperty("gpr.key") as String? ?: System.getenv("GIT_KEY")
+            }
+        }
+    }
+    publications {
+        register("gpr", MavenPublication::class) {
+            from(components["kotlin"])
+        }
+    }
 }
 
 kotlin {

@@ -28,14 +28,14 @@ enum class ActivationFunctions(
         }
     }, {
         if (it == 0.0) {
-            INFTY
+            Double.POSITIVE_INFINITY
         } else {
             0.0
         }
     }, { 0.0 }),
 
     /**
-     * Identity for -1 < x < 1, -1 for x < -1 and 1 for x > 1
+     * Identity for -1 <= x <= 1, -1 for x < -1 and 1 for x > 1
      */
     @Deprecated("This function isn't smooth", level = DeprecationLevel.WARNING)
     HardHyperbolicFunction({
@@ -45,10 +45,16 @@ enum class ActivationFunctions(
             else -> it
         }
     }, {
-        if (it < -1 || it > 1) {
-            0.0
-        } else {
-            1.0
+        when {
+            it < -1 || it > 1 -> {
+                0.0
+            }
+            it == -1.0 || it == 1.0 -> {
+                Double.NaN
+            }
+            else -> {
+                1.0
+            }
         }
     }, {
         if (it == -1.0 || it == 1.0) {
@@ -63,10 +69,16 @@ enum class ActivationFunctions(
      */
     @Deprecated("This function isn't smooth", level = DeprecationLevel.WARNING)
     RectifiedLinearUnit({ max(0.0, it) }, {
-        if (it < 0) {
-            0.0
-        } else {
-            1.0
+        when {
+            it < 0 -> {
+                0.0
+            }
+            it == 0.0 -> {
+                Double.NaN
+            }
+            else -> {
+                1.0
+            }
         }
     }, {
         if (it == 0.0) {
@@ -87,10 +99,16 @@ enum class ActivationFunctions(
             it
         }
     }, {
-        if (it < 0) {
-            ALPHA
-        } else {
-            1.0
+        when {
+            it < 0 -> {
+                ALPHA
+            }
+            it == 0.0 -> {
+                Double.NaN
+            }
+            else -> {
+                1.0
+            }
         }
     }, {
         if (it < 0.0) {
@@ -223,4 +241,8 @@ enum class ActivationFunctions(
      * Returns functional value (f([double]))
      */
     operator fun invoke(double: Double) = function(double)
+
+    companion object {
+        const val ALPHA = 1.0
+    }
 }

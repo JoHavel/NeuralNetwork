@@ -38,7 +38,7 @@ class NeuralNetworkTestJVM {
         }
     }
 
-    @Test
+    //@Test
     fun savedNN() {
         var error = 0
         repeat(100) {
@@ -72,7 +72,7 @@ class NeuralNetworkTestJVM {
         }
     }
 
-    @Test
+    //@Test
     fun savedNNC() {
         var error = 0
         repeat(100) {

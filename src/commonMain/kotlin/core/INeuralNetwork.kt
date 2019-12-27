@@ -19,15 +19,18 @@ interface INeuralNetwork {
      */
     fun run(input: Matrix<Double>): Matrix<Double>
 
-    fun run(input: DoubleArray) = run(create(input, input.size, 1))
+    fun run(input: DoubleArray, numCols: Int = 1) = run(create(input, input.size / numCols, numCols))
 
     /**
      * Takes input and desired output, compute estimated output and apply backpropagation
      */
     fun train(input: Matrix<Double>, output: Matrix<Double>): Matrix<Double>
 
-    fun train(input: DoubleArray, output: DoubleArray) =
-        train(create(input, input.size, 1), create(output, output.size, 1)).toDoubleArray()
+    fun train(input: DoubleArray, output: DoubleArray, inNumCols: Int = 1, outNumCols: Int = 1) =
+        train(
+            create(input, input.size / inNumCols, inNumCols),
+            create(output, output.size / outNumCols, outNumCols)
+        ).toDoubleArray()
 
     fun train(input: Array<DoubleArray>, output: Array<DoubleArray>) {
         require(input.size == output.size) { "Wrong training sets! Size of input is ${input.size}, size of output is ${output.size}." }

@@ -34,7 +34,9 @@ class BasicNeuralNetwork(
     val inputLayerSize: Int = numberOfHiddenLayers,
     val outputLayerSize: Int = numberOfHiddenLayers,
     private val weights: MutableList<Matrix<Double>> = MutableList(numberOfHiddenLayers + 1) {
-        when (it) {
+        if (numberOfHiddenLayers == 0) {
+            rand(outputLayerSize, inputLayerSize)
+        } else when (it) {
             0 -> rand(sizes(it), inputLayerSize) * (sqrt(2.0 / (sizes(it) + inputLayerSize)))
             numberOfHiddenLayers -> rand(
                 outputLayerSize,
@@ -119,7 +121,13 @@ class BasicNeuralNetwork(
                 outputLayerSize,
                 dataList[5].removePrefix("[[").removeSuffix("]]").split("], [").mapIndexed
                 { index, it ->
-                    when (index) {
+                    if (numberOfHiddenLayers == 0) {
+                        create(
+                            it.split(", ").map { str -> str.toDouble() }.toDoubleArray(),
+                            outputLayerSize,
+                            inputLayerSize
+                        )
+                    } else when (index) {
                         0 -> create(
                             it.split(", ").map { str -> str.toDouble() }.toDoubleArray(),
                             sizes(index),

@@ -1,6 +1,7 @@
 package sample
 
 import core.BasicNeuralNetwork
+import core.ConvolutionalNeuralNetwork
 import mnistDatabase.loadFileString
 import mnistDatabase.saveFile
 import mnistDatabase.train
@@ -37,12 +38,52 @@ class NeuralNetworkTestJVM {
         }
     }
 
-    //@Test
+    @Test
     fun savedNN() {
-        val data = mnistDigitTrainingDataset.iterator().next()
-        println(BasicNeuralNetwork.load(loadFileString("output.txt")).run(data.first).toList())
-        println(data.first.toList())
-        println(data.second.indexOf(1.0))
+        var error = 0
+        repeat(100) {
+            val data = mnistDigitTrainingDataset.iterator().next()
+            val answer =
+                BasicNeuralNetwork.load(loadFileString("output.txt")).run(data.first).toList()
+            if (answer.indexOf(answer.maxBy { it }) != data.second.indexOf(1.0)) {
+                error++
+            }
+        }
+        println(error)
+    }
+
+    //@Test
+    fun mnistC() {
+        val nn = ConvolutionalNeuralNetwork(
+            ConvolutionalNeuralNetwork.edgeFilter,
+            BasicNeuralNetwork(
+                1,
+                inputLayerSize = (imageWidth - 2) * (imageHeight - 2) * 8,
+                outputLayerSize = numberOfDigits,
+                sizes = { 100 })
+        )
+        repeat(10) {
+            nn.train(mnistDigitTrainingDataset, imageWidth)
+            nn.train(emnistDigitTrainingDataset, imageWidth)
+            nn.learningRate /= learningRateEpochDecrease
+
+            saveFile("outputC.txt", nn.save())
+            savedNNC()
+        }
+    }
+
+    @Test
+    fun savedNNC() {
+        var error = 0
+        repeat(100) {
+            val data = mnistDigitTrainingDataset.iterator().next()
+            val answer =
+                ConvolutionalNeuralNetwork.load(loadFileString("outputC.txt")).run(data.first, imageWidth).toList()
+            if (answer.indexOf(answer.maxBy { it }) != data.second.indexOf(1.0)) {
+                error++
+            }
+        }
+        println(error)
     }
 
     //@Test

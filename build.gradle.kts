@@ -2,7 +2,7 @@ import org.jetbrains.dokka.gradle.DokkaTask
 import java.net.URL
 
 group = "cz.moznabude"
-version = "0.0"
+version = "0.1"
 val serializationVersion = "0.13.0"
 plugins {
     kotlin("multiplatform") version "1.3.50"

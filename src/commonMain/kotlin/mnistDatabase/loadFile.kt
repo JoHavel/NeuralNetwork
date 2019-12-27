@@ -79,8 +79,8 @@ class TrainingData(imageFile: String, numberFile: String, val inverse: Boolean) 
     }
 }
 
-fun INeuralNetwork.train(data: TrainingData) {
+fun INeuralNetwork.train(data: TrainingData, numCols: Int = 1) {
     for ((input, output) in data) {
-        train(input, output)
+        train(input, output, numCols)
     }
 }

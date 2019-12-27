@@ -31,10 +31,12 @@ class BasicNeuralNetwork(
     private val numberOfHiddenLayers: Int,
     val activationFunction: ActivationFunctions = ActivationFunctions.Sigmoid,
     val sizes: (Int) -> Int = { numberOfHiddenLayers },
-    private val inputLayerSize: Int = numberOfHiddenLayers,
-    private val outputLayerSize: Int = numberOfHiddenLayers,
+    val inputLayerSize: Int = numberOfHiddenLayers,
+    val outputLayerSize: Int = numberOfHiddenLayers,
     private val weights: MutableList<Matrix<Double>> = MutableList(numberOfHiddenLayers + 1) {
-        when (it) {
+        if (numberOfHiddenLayers == 0) {
+            rand(outputLayerSize, inputLayerSize)
+        } else when (it) {
             0 -> rand(sizes(it), inputLayerSize) * (sqrt(2.0 / (sizes(it) + inputLayerSize)))
             numberOfHiddenLayers -> rand(
                 outputLayerSize,
@@ -86,16 +88,17 @@ class BasicNeuralNetwork(
         return values.last()
     }
 
-    override fun train(input: Matrix<Double>, output: Matrix<Double>) {
-        var error = output - run(input)
-        //println(error.map { abs(it) }.elementSum())
+    override fun train(input: Matrix<Double>, output: Matrix<Double>) = train(output - run(input))
+
+    fun train(er: Matrix<Double>): Matrix<Double> {
+        var error = er
         for (i in numberOfHiddenLayers downTo 0) {
             val derivations = values[i + 1].map { activationFunction.yD(it) }.elementTimes(error)
             biases[i] += derivations * learningRate
             error = weights[i].T * derivations
             weights[i] += derivations * values[i].T * learningRate
         }
-
+        return error
     }
 
     fun save() =
@@ -118,7 +121,13 @@ class BasicNeuralNetwork(
                 outputLayerSize,
                 dataList[5].removePrefix("[[").removeSuffix("]]").split("], [").mapIndexed
                 { index, it ->
-                    when (index) {
+                    if (numberOfHiddenLayers == 0) {
+                        create(
+                            it.split(", ").map { str -> str.toDouble() }.toDoubleArray(),
+                            outputLayerSize,
+                            inputLayerSize
+                        )
+                    } else when (index) {
                         0 -> create(
                             it.split(", ").map { str -> str.toDouble() }.toDoubleArray(),
                             sizes(index),

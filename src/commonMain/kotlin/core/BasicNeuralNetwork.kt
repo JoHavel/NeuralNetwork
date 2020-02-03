@@ -29,7 +29,7 @@ import kotlin.math.sqrt
  */
 class BasicNeuralNetwork(
     private val numberOfHiddenLayers: Int,
-    val activationFunction: ActivationFunctions = ActivationFunctions.Sigmoid,
+    val activationFunction: IActivationFunctions = ActivationFunctions.Sigmoid,
     val sizes: (Int) -> Int = { numberOfHiddenLayers },
     val inputLayerSize: Int = numberOfHiddenLayers,
     val outputLayerSize: Int = numberOfHiddenLayers,
@@ -102,7 +102,12 @@ class BasicNeuralNetwork(
     }
 
     fun save() =
-        "$numberOfHiddenLayers;$activationFunction;${(0..numberOfHiddenLayers + 1).map(sizes)};$inputLayerSize;$outputLayerSize;${weights.map { it.toList() }};${biases.map { it.toList() }}"
+        when (activationFunction) {
+            is ActivationFunctions -> "$numberOfHiddenLayers;$activationFunction;${(0..numberOfHiddenLayers + 1).map(
+                sizes
+            )};$inputLayerSize;$outputLayerSize;${weights.map { it.toList() }};${biases.map { it.toList() }}"
+            else -> TODO("It's hard to save unknown function")
+        }
 
     companion object {
         fun load(data: String): BasicNeuralNetwork {
@@ -115,7 +120,11 @@ class BasicNeuralNetwork(
             val outputLayerSize = dataList[4].toInt()
             return BasicNeuralNetwork(
                 numberOfHiddenLayers,
-                ActivationFunctions.valueOf(dataList[1]),
+                try {
+                    ActivationFunctions.valueOf(dataList[1])
+                } catch (e: Exception) {
+                    TODO("It's hard to save unknown function")
+                },
                 sizes,
                 inputLayerSize,
                 outputLayerSize,

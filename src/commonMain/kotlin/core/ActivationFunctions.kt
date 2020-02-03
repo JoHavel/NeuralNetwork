@@ -13,9 +13,9 @@ import kotlin.math.*
  */
 enum class ActivationFunctions(
     private val function: (Double) -> Double,
-    val xD: (Double) -> Double,
-    val yD: (Double) -> Double
-) {
+    override val xD: (Double) -> Double,
+    override val yD: (Double) -> Double
+) : IActivationFunctions {
     /**
      * Zero for negative values, one for others.
      */
@@ -237,10 +237,7 @@ enum class ActivationFunctions(
     })
     ;
 
-    /**
-     * Returns functional value (f([double]))
-     */
-    operator fun invoke(double: Double) = function(double)
+    override operator fun invoke(double: Double) = function(double)
 
     companion object {
         const val ALPHA = 1.0

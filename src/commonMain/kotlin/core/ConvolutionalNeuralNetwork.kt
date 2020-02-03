@@ -5,6 +5,17 @@ import koma.extensions.*
 import koma.matrix.Matrix
 import koma.sqrt
 
+/**
+ * Convolutional Neural Network consisted only of two [BasicNeuralNetwork].
+ *
+ * @constructor creates new [ConvolutionalNeuralNetwork] with
+ * * [filter] as small [BasicNeuralNetwork] that applies on every part of image before [neuralNetwork]
+ * * [neuralNetwork] as the main network
+ *
+ * @param[filter] small main network
+ * @param[neuralNetwork] main neural network
+ * @param[trainBoth] if filter should be trained
+ */
 class ConvolutionalNeuralNetwork(
     private val filter: BasicNeuralNetwork,
     private val neuralNetwork: BasicNeuralNetwork,
@@ -12,6 +23,9 @@ class ConvolutionalNeuralNetwork(
 ) :
     INeuralNetwork {
 
+    /**
+     * Size of one side of [filter]
+     */
     private val filterSizeSqrt: Int
 
     /**
@@ -31,6 +45,9 @@ class ConvolutionalNeuralNetwork(
         require(neuralNetwork.inputLayerSize % filter.outputLayerSize == 0) { "Filter is not for this neural network" }
     }
 
+    /**
+     * Applies filter on every square of [input]
+     */
     private fun runFilter(input: Matrix<Double>): Matrix<Double> {
         val output = Matrix(
             (input.numRows() - filterSizeSqrt + 1) * (input.numCols() - filterSizeSqrt + 1) * filter.outputLayerSize,
@@ -65,14 +82,20 @@ class ConvolutionalNeuralNetwork(
         } else create(DoubleArray(0))
     }
 
-    fun save() = filter.save() + ";;" + neuralNetwork.save()
+    override fun save() = filter.save() + ";;" + neuralNetwork.save()
 
     companion object {
+        /**
+         * Load [ConvolutionalNeuralNetwork] from [data]
+         */
         fun load(data: String): ConvolutionalNeuralNetwork {
             val nns = data.split(";;")
             return ConvolutionalNeuralNetwork(BasicNeuralNetwork.load(nns[0]), BasicNeuralNetwork.load(nns[1]))
         }
 
+        /**
+         * Data of [Matrix] for [edgeFilter]
+         */
         private val edgeFilterData = mutableListOf(
             mutableListOf(1.0, 1.0, 1.0, 0.0, 0.0, 0.0, -1.0, -1.0, -1.0),
             mutableListOf(1.0, 0.0, -1.0, 1.0, 0.0, -1.0, 1.0, 0.0, -1.0),
@@ -83,6 +106,10 @@ class ConvolutionalNeuralNetwork(
             mutableListOf(0.0, 1.0, 1.0, 1.0, 0.0, -1.0, -1.0, -1.0, 0.0),
             mutableListOf(0.0, -1.0, -1.0, -1.0, 0.0, 1.0, 1.0, 1.0, 0.0)
         )
+
+        /**
+         * Example filter, detects edges
+         */
         val edgeFilter: BasicNeuralNetwork
             get() = BasicNeuralNetwork(
                 0, ActivationFunctions.RectifiedLinearUnit, { 0 }, 9, 8,

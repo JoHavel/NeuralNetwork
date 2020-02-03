@@ -38,4 +38,9 @@ interface INeuralNetwork {
             train(input[i], output[i])
         }
     }
+
+    /**
+     * Returns save of NN in [String]
+     */
+    fun save(): String
 }

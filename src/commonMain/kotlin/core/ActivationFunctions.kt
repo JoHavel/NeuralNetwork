@@ -194,7 +194,7 @@ enum class ActivationFunctions(
     /**
      * x * [Sigmoid] (x / (1 + exp(-x)))
      */
-    Swift({
+    Swish({
         it / (1 + exp(-it))   //it * Sigmoid(it)
     }, {
         val expIt = exp(-it)

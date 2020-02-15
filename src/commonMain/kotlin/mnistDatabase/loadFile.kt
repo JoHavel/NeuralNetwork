@@ -24,8 +24,9 @@ private fun List<Byte>.toIntArray(): IntArray {
     return result
 }
 
-class TrainingData(imageFile: String, numberFile: String, val inverse: Boolean) :
-    Sequence<Pair<DoubleArray, DoubleArray>> {
+typealias TrainingData = Sequence<Pair<DoubleArray, DoubleArray>>
+
+class MnistTrainingData(imageFile: String, numberFile: String, val inverse: Boolean) : TrainingData {
 
     private val imageBytes = loadFile(imageFile.removeSuffix(".idx3-ubyte") + ".idx3-ubyte")
     private val imageFirstInts = imageBytes.slice(4 until 16).toIntArray()
@@ -42,7 +43,7 @@ class TrainingData(imageFile: String, numberFile: String, val inverse: Boolean) 
 
     override fun iterator(): Iterator<Pair<DoubleArray, DoubleArray>> {
         return object : Iterator<Pair<DoubleArray, DoubleArray>> {
-            val data = this@TrainingData
+            val data = this@MnistTrainingData
             val indexes = (0 until numberOfImages).shuffled()
             var index = 0
             override fun hasNext() = index < numberOfImages

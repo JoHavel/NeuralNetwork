@@ -2,7 +2,6 @@ package sample
 
 import koma.matrix.Matrix
 import koma.matrix.MatrixFactory
-import mnistDatabase.TrainingData
 
 const val wrongInputLayerSize = 1
 const val numberOfHiddenLayers = 1

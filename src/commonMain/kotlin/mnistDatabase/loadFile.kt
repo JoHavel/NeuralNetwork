@@ -1,3 +1,11 @@
+/*
+ * file:               loadFile.kt
+ * original author:    Jonáš Havelka <jonas.havelka@volny.cz>
+ * project:            NeuralNetwork - Kotlin library for NNs
+ * content:            fun loadFile, loadFileString, saveFile, interface TrainingData, class MnistTrainingData, extension function INeuralNetwork.train (for TrainingData)
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.
+ */
+
 package mnistDatabase
 
 import core.INeuralNetwork

@@ -1,3 +1,11 @@
+/*
+ * file:               IActivationFunctions.kt
+ * original author:    Jonáš Havelka <jonas.havelka@volny.cz>
+ * project:            NeuralNetwork - Kotlin library for NNs
+ * content:            interface IActivationFunctions
+ * Licensed under the MIT License. See LICENSE file in the project root for full license information.
+ */
+
 package core
 
 /**
